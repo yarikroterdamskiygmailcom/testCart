@@ -1,20 +1,30 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {NgModule} from '@angular/core';
+import {GoogleMapsModule, GoogleMap} from '@angular/google-maps'
+import {MaterialModule} from "../material.module";
+import {PagesRoutingModule} from "./pages-routing.module";
+import {CreateMarkerComponent} from "./create-marker/create.marker.component";
+import {MapComponent} from "./map/map.component";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {CommonModule} from "@angular/common";
+import {UploadImageComponent} from "../components/upload-image/upload.image.component";
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+    imports: [
+        MaterialModule,
+        GoogleMapsModule,
+        PagesRoutingModule,
+        FormsModule,
+        CommonModule,
+        ReactiveFormsModule
+    ],
+    declarations: [
+        CreateMarkerComponent,
+        MapComponent,
+        UploadImageComponent
+    ],
+    providers: [GoogleMap],
+    bootstrap: []
 })
-export class AppModule { }
+export class PagesModule {
+
+}

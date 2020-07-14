@@ -1,38 +1,34 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {MapInfoWindow, MapMarker} from "@angular/google-maps";
+import {Component} from '@angular/core';
+import {Router} from "@angular/router";
+import {StoreHistoryService} from "../../_service/store.history.service";
+import {BehaviorSubject} from "rxjs";
+import {HistoryModel} from "../../models/history.models";
+import {StoreService} from "../../_service/store.service";
+
 @Component({
-  selector: 'app-map',
-  templateUrl: './map.component.html',
-  styleUrls: ['./map.component.sass']
+    selector: 'app-sitebar',
+    templateUrl: './sitebar.component.html',
+    styleUrls: ['./sitebar.component.scss']
 })
-export class MapComponent implements OnInit{
-  @ViewChild(MapInfoWindow, { static: false }) infoWindow: MapInfoWindow
-  center = {}
-  title = 'testCart';
-  zoom = 12
- // center: //google.maps.LatLngLiteral
-  options: any = {//google.maps.MapOptions
-    mapTypeId: 'hybrid',
-    zoomControl: false,
-    scrollwheel: false,
-    disableDoubleClickZoom: true,
-    maxZoom: 15,
-    minZoom: 8,
-  }
-  markers = []
+export class SitebarComponent {
+    historyList$: BehaviorSubject<HistoryModel[]> = this.storeHistoryService.getItems();
+    makersList$: BehaviorSubject<HistoryModel[]> = this.storeHistoryService.getItems();
 
-  ngOnInit() {
-    navigator.geolocation.getCurrentPosition(position => {
-      debugger
-      this.center = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      }
-    })
-  }
+    constructor(
+        private router: Router,
+        private storeHistoryService: StoreHistoryService,
+        private storeService: StoreService,
+    ) {}
 
-  openInfo(marker: MapMarker, content) {
-    this.infoWindow.open(marker)
-  }
+    createMaker(): void {
+        this.router.navigateByUrl('/create-maker');
+    }
 
+    get listsHistory(): HistoryModel[] {
+        return this.historyList$.getValue().reverse();
+    }
+
+    get listsMakers(): HistoryModel[] {
+        return this.makersList$.getValue();
+    }
 }

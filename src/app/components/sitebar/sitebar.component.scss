@@ -1,0 +1,28 @@
+.sitebar-content {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .action {
+    box-sizing: border-box;
+    padding: 20px;
+  }
+}
+
+::ng-deep .mat-tab-labels > div {
+  padding: 0;
+  min-width: 149px;
+}
+
+.span-title {
+  font-size: 15px;
+  margin-right: 10px;
+}
+
+.span-date {
+  font-size: 13px;
+  color: gray;
+  margin-left: 10px;
+}

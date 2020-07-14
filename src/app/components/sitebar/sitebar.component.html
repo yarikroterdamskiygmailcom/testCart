@@ -1,16 +1,30 @@
-<google-map
-        height="100vh"
-        width="100%"
-        [center]="center"
->
-    <map-marker
-            *ngFor="let marker of markers"
-            [position]="marker.position"
-            [label]="marker.label"
-            [title]="marker.title"
-            [options]="marker.options"
-    >
-    </map-marker>
-</google-map>
-<map-info-window>Hello Google Maps</map-info-window>
-<!--/[center]="center"-->
+<div class="sitebar-content">
+    <div class="sitebar-work">
+        <mat-tab-group animationDuration="0ms">
+            <mat-tab label="Search">
+                <mat-form-field class="example-full-width">
+                    <mat-label>Location</mat-label>
+                    <input matInput #location>
+                </mat-form-field>
+
+                <mat-list-item *ngFor="let item of listsMakers" role="listitem">
+                    <span class="span-title">{{item.action}}</span>
+                    |
+                    <span class="span-date">{{item.createAt | date}}</span>
+                </mat-list-item>
+            </mat-tab>
+            <mat-tab label="History">
+                <mat-list role="list">
+                    <mat-list-item *ngFor="let item of listsHistory" role="listitem">
+                        <span class="span-title">{{item.action}}</span>
+                        |
+                        <span class="span-date">{{item.createAt | date}}</span>
+                    </mat-list-item>
+                </mat-list>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+    <div class="action">
+        <button mat-stroked-button color="warn" (click)="createMaker()">Create Marker</button>
+    </div>
+</div>
