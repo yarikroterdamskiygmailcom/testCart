@@ -96,3 +96,32 @@ export const arrayTypes = [
     'veterinary_care',
     'zoo',
 ];
+
+
+export enum NameService{
+    StoreService = 'StoreService',
+    StoreHistoryService = 'StoreHistoryService',
+}
+
+export const CUSTOM_MAP_STYLE: any[] = [
+    {
+        featureType: "poi",
+        stylers: [
+            {
+                visibility: "off"
+            }
+        ]
+    }
+];
+
+export const CUSTOM_MAP_NAME: {name: string} = {
+    name: 'Custom Style'
+};
+
+export const DEFAULT_KYEV_LOCATION: {
+    lat: number,
+    lng: number
+} = {
+    lat: 50.4501,
+    lng: 30.5234
+};

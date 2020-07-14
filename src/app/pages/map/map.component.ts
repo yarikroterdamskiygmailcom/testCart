@@ -1,13 +1,14 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {GoogleMap, MapInfoWindow, MapMarker} from "@angular/google-maps";
+import {AfterViewInit, Component, ViewChild} from '@angular/core';
+import {GoogleMap, MapInfoWindow} from "@angular/google-maps";
 
 import {StoreService} from "../../_service/store.service";
-import {map, takeUntil} from "rxjs/operators";
-import {BehaviorSubject, interval, Observable, Subject} from "rxjs";
+import {takeUntil} from "rxjs/operators";
+import {interval, Subject} from "rxjs";
 import {MakerModel} from "../../models/makers.models";
 import {Helper} from "../../helpers/helper";
-import {TypeHistoryAction} from "../../models/history.models";
 import {StoreHistoryService} from "../../_service/store.history.service";
+import {CUSTOM_MAP_NAME, CUSTOM_MAP_STYLE, DEFAULT_KYEV_LOCATION} from "../../const/consts";
+import {ActionControllerService} from "../../_service/action.controller.service";
 
 
 declare let google: any;
@@ -21,10 +22,7 @@ export class MapComponent extends Helper<any> implements AfterViewInit {
     @ViewChild(MapInfoWindow, {static: false}) infoWindow: MapInfoWindow;
     @ViewChild(GoogleMap, {static: false}) map: GoogleMap;
 
-    _center: {} = {
-        lat: 50.4501,
-        lng: 30.5234
-    };
+    _center: {} = DEFAULT_KYEV_LOCATION;
 
     get center(){
         return (this.storeService.selectMaker && this.storeService.selectMaker.position) || this._center;
@@ -34,25 +32,17 @@ export class MapComponent extends Helper<any> implements AfterViewInit {
         this._center = value;
     }
 
-    customMapType = new google.maps.StyledMapType([
-        {
-            featureType: "poi",
-            stylers: [
-                {
-                    visibility: "off"
-                }
-            ]
-        }
-    ], {
-        name: 'Custom Style'
-    });
-    customMapTypeId = 'custom_style';
+    customMapType = new google.maps.StyledMapType(CUSTOM_MAP_STYLE, CUSTOM_MAP_NAME);
+    customMapTypeId = CUSTOM_MAP_NAME.name;
     options: any = {
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         disableDoubleClickZoom: true,
         zoom: 12,
         mapTypeControlOptions: {
-            mapTypeIds: [google.maps.MapTypeId.ROADMAP, this.customMapTypeId]
+            mapTypeIds: [
+                google.maps.MapTypeId.ROADMAP,
+                this.customMapTypeId
+            ]
         }
     };
 
@@ -62,11 +52,12 @@ export class MapComponent extends Helper<any> implements AfterViewInit {
 
     data:MakerModel;
 
-    destroyed$ = new Subject();
+    destroyed$:Subject<boolean> = new Subject();
 
     constructor(
         private storeService: StoreService,
-        private storeHistoryService: StoreHistoryService
+        private storeHistoryService: StoreHistoryService,
+        private actionControllerService: ActionControllerService,
     ) {
         super()
     }
@@ -101,17 +92,11 @@ export class MapComponent extends Helper<any> implements AfterViewInit {
     openInfo(marker, data): void {
         this.infoWindow.open(marker);
         this.data = data;
-        this.storeHistoryService.createItem({
-            action: `Open info marker: ${data.id}`,
-            type: TypeHistoryAction.success
-        });
+        this.actionControllerService.successAction(`Open info marker: ${data.id}`)
     }
 
     closeInfo(): void {
         this.infoWindow.close();
-        this.storeHistoryService.createItem({
-            action: `Close info marker`,
-            type: TypeHistoryAction.success
-        });
+        this.actionControllerService.successAction( `Close info marker`)
     }
 }

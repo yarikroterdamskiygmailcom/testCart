@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import {ServiceProvider} from "./service.provider";
 import {HistoryModel} from "../models/history.models";
+import {NameService} from "../const/consts";
 
 @Injectable()
 export class StoreHistoryService extends ServiceProvider<HistoryModel>{
@@ -9,10 +10,10 @@ export class StoreHistoryService extends ServiceProvider<HistoryModel>{
     }
 
     localStr () {
-        return 'StoreHistoryService'
+        return NameService.StoreHistoryService;
     }
 
     handleWorkWithData() : void{
-        console.log('change data')
+        console.log('change data');
     };
 }

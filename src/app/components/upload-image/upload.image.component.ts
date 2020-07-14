@@ -2,6 +2,7 @@ import {Component, EventEmitter, Output} from '@angular/core';
 import {MakerImageModel} from "../../models/makers.models";
 import {StoreHistoryService} from "../../_service/store.history.service";
 import {TypeHistoryAction} from "../../models/history.models";
+import {ActionControllerService} from "../../_service/action.controller.service";
 
 @Component({
     selector: 'app-upload-image',
@@ -15,7 +16,9 @@ export class UploadImageComponent {
 
     constructor(
         private storeHistoryService: StoreHistoryService,
-    ) {}
+        private actionControllerService: ActionControllerService
+    ) {
+    }
 
     isValidImage(value: string): boolean {
         return (
@@ -28,24 +31,21 @@ export class UploadImageComponent {
 
         arr.forEach((file: any) => {
             if (!file || (file && !this.isValidImage(file.name))) {
-                this.storeHistoryService.createItem({
-                    action: `Invalid image format`,
-                    type: TypeHistoryAction.error
-                });
+                this.actionControllerService.errorAction(`Invalid image format: ${file.name}`);
                 return;
             }
+
             const reader: FileReader = new FileReader();
+
             reader.readAsDataURL(file);
+
             reader.onloadend = () => {
                 const image = new MakerImageModel({
                     isMain: !this.loadedPhoto.length,
                     path: reader.result as string,
                 });
                 this.loadedPhoto.push(image);
-                this.storeHistoryService.createItem({
-                    action: 'Upload Image',
-                    type: TypeHistoryAction.success
-                });
+                this.actionControllerService.successAction(`Upload Image`);
             };
         });
 
@@ -67,17 +67,11 @@ export class UploadImageComponent {
 
         const firstElement: MakerImageModel | undefined = this.loadedPhoto[0];
         if (find) {
-            this.storeHistoryService.createItem({
-                action: `${find.id} set us main`,
-                type: TypeHistoryAction.success
-            });
+            this.actionControllerService.successAction(`${find.id} set us main`);
             find.isMain = true;
         } else if (firstElement) {
             this.loadedPhoto[0].isMain = true;
-            this.storeHistoryService.createItem({
-                action: `${firstElement.id} set us main`,
-                type: TypeHistoryAction.success
-            });
+            this.actionControllerService.successAction(`${firstElement.id} set us main`);
         }
         this.loadedPhotoEmit.emit(this.loadedPhoto);
     }
@@ -88,10 +82,7 @@ export class UploadImageComponent {
         this.loadedPhoto = this.loadedPhoto.filter(({id: idFindElement}: MakerImageModel): boolean => {
             return idDeletedElement !== idFindElement;
         });
-        this.storeHistoryService.createItem({
-            action: `Delete image by id ${idDeletedElement}`,
-            type: TypeHistoryAction.success
-        });
+        this.actionControllerService.successAction(`Delete image by id ${idDeletedElement}`);
         this.loadedPhotoEmit.emit(this.loadedPhoto);
     }
 }

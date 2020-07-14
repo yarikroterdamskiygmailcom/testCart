@@ -1,32 +1,36 @@
 import {Component} from '@angular/core';
 import {Router} from "@angular/router";
 import {StoreHistoryService} from "../../_service/store.history.service";
-import {BehaviorSubject, Observable} from "rxjs";
+import {BehaviorSubject} from "rxjs";
 import {HistoryModel, TypeHistoryAction} from "../../models/history.models";
 import {StoreService} from "../../_service/store.service";
 import {MakerModel} from "../../models/makers.models";
 import {Helper} from "../../helpers/helper";
 import {FormControl} from "@angular/forms";
 import {arrayTypes} from "../../const/consts";
+import {ActionControllerService} from "../../_service/action.controller.service";
 
 @Component({
-    selector: 'app-sitebar',
-    templateUrl: './sitebar.component.html',
-    styleUrls: ['./sitebar.component.scss']
+    selector: 'app-sidebar',
+    templateUrl: './sidebar.component.html',
+    styleUrls: ['./sidebar.component.scss']
 })
-export class SitebarComponent extends Helper<any>{
+export class SidebarComponent extends Helper<any> {
     historyList$: BehaviorSubject<HistoryModel[]> = this.storeHistoryService.getItems();
+
     get makersList(): MakerModel[] {
         return this.storeService.makersList;
     }
+
     typesAsColor: object = {
         [TypeHistoryAction.success]: 'primary',
         [TypeHistoryAction.error]: 'warn',
         [TypeHistoryAction.info]: 'accent'
     };
+
     arrayTypes: string[] = arrayTypes;
-    searchSrt = new FormControl('');
-    searchByCategory = new FormControl([]);
+    searchSrt: FormControl = new FormControl('');
+    searchByCategory: FormControl = new FormControl([]);
 
     get listsHistory(): HistoryModel[] {
         return this.historyList$.getValue().reverse();
@@ -34,33 +38,39 @@ export class SitebarComponent extends Helper<any>{
 
     constructor(
         private router: Router,
-        private storeHistoryService: StoreHistoryService,
         private storeService: StoreService,
+        private storeHistoryService: StoreHistoryService,
+        private actionControllerService: ActionControllerService,
+
     ) {
         super()
     }
 
-    createMaker(): void {
-        this.router.navigateByUrl('/create-maker');
+    async createMaker() {
+        this.actionControllerService.successAction(`Router create maker`);
+        await this.router.navigateByUrl('/create-maker');
     }
 
-    home(): void {
-        this.router.navigateByUrl('/');
+    async home() {
+        this.actionControllerService.successAction(`Router Home`);
+        await this.router.navigateByUrl('/');
     }
 
-    setSelectMaker (value: MakerModel): void {
+    setSelectMaker(value: MakerModel): void {
+        this.actionControllerService.successAction(`Select Maker`);
         this.storeService.selectMaker = value;
     }
 
-    isColor({ type }: HistoryModel): string {
+    isColor({type}: HistoryModel): string {
         return this.typesAsColor[type] || '';
     }
 
-    changeValue(data: unknown, type: string){
-        if(!!type)
+    changeValue(data: unknown, type: string): void {
+        if (!!type)
             this.storeService.objectSearch = {
                 ...this.storeService.objectSearch,
-                [type] : data
+                [type]: data
             };
+        this.actionControllerService.successAction(`Filtering`);
     }
 }

@@ -1,16 +1,23 @@
-import {BehaviorSubject, Observable, of} from "rxjs";
+import {BehaviorSubject, Observable, of, Subject} from "rxjs";
 import {Helper} from "../helpers/helper";
 import {tap} from "rxjs/operators";
+import {OnInit} from "@angular/core";
 
-export abstract class ServiceProvider<T> extends Helper<any>{
+export abstract class ServiceProvider<T> extends Helper<any> implements OnInit{
     private items: BehaviorSubject<T[]> = new BehaviorSubject<T[]>([]);
     private _selectItem: T | undefined;
+    destroyed$:Subject<boolean> = new Subject();
+
+    ngOnInit(): void {
+        this.destroyed$.next(true);
+        this.destroyed$.complete();
+    }
 
     constructor(){
         super();
-        const array = this.strToJson(() => JSON.parse(localStorage.getItem(this.localStr())), []);
+        const array = this.strToJson(() => this.getDataFromStore(), []);
         this.items.next(Array.isArray(array) ? array : []);
-        this.handleWorkWithData()
+        this.handleWorkWithData();
     }
 
     abstract localStr(): string;
@@ -22,6 +29,10 @@ export abstract class ServiceProvider<T> extends Helper<any>{
 
     set selectMaker(value: T) {
         this._selectItem = value ? this.model(value) : value;
+    }
+
+    getDataFromStore(): T{
+        return JSON.parse(localStorage.getItem(this.localStr()));
     }
 
     getValues(): T[] {
