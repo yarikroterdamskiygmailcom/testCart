@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Output} from '@angular/core';
 import {MakerImageModel} from "../../models/makers.models";
 import {StoreHistoryService} from "../../_service/store.history.service";
+import {TypeHistoryAction} from "../../models/history.models";
 
 @Component({
     selector: 'app-upload-image',
@@ -27,6 +28,10 @@ export class UploadImageComponent {
 
         arr.forEach((file: any) => {
             if (!file || (file && !this.isValidImage(file.name))) {
+                this.storeHistoryService.createItem({
+                    action: `Invalid image format`,
+                    type: TypeHistoryAction.error
+                });
                 return;
             }
             const reader: FileReader = new FileReader();
@@ -36,10 +41,10 @@ export class UploadImageComponent {
                     isMain: !this.loadedPhoto.length,
                     path: reader.result as string,
                 });
-                debugger
                 this.loadedPhoto.push(image);
                 this.storeHistoryService.createItem({
-                    action: 'Upload Image'
+                    action: 'Upload Image',
+                    type: TypeHistoryAction.success
                 });
             };
         });
@@ -63,13 +68,15 @@ export class UploadImageComponent {
         const firstElement: MakerImageModel | undefined = this.loadedPhoto[0];
         if (find) {
             this.storeHistoryService.createItem({
-                action: `${find.id} set us main`
+                action: `${find.id} set us main`,
+                type: TypeHistoryAction.success
             });
             find.isMain = true;
         } else if (firstElement) {
             this.loadedPhoto[0].isMain = true;
             this.storeHistoryService.createItem({
-                action: `${firstElement.id} set us main`
+                action: `${firstElement.id} set us main`,
+                type: TypeHistoryAction.success
             });
         }
         this.loadedPhotoEmit.emit(this.loadedPhoto);
@@ -82,7 +89,8 @@ export class UploadImageComponent {
             return idDeletedElement !== idFindElement;
         });
         this.storeHistoryService.createItem({
-            action: `Delete image by id ${idDeletedElement}`
+            action: `Delete image by id ${idDeletedElement}`,
+            type: TypeHistoryAction.success
         });
         this.loadedPhotoEmit.emit(this.loadedPhoto);
     }

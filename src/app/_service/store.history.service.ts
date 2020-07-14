@@ -7,4 +7,12 @@ export class StoreHistoryService extends ServiceProvider<HistoryModel>{
     model(data: HistoryModel): HistoryModel {
         return new HistoryModel(data);
     }
+
+    localStr () {
+        return 'StoreHistoryService'
+    }
+
+    handleWorkWithData() : void{
+        console.log('change data')
+    };
 }

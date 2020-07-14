@@ -2,29 +2,57 @@
     <div class="sitebar-work">
         <mat-tab-group animationDuration="0ms">
             <mat-tab label="Search">
-                <mat-form-field class="example-full-width">
-                    <mat-label>Location</mat-label>
-                    <input matInput #location>
+                <mat-form-field class="example-full-width full-width">
+                    <mat-label>Search</mat-label>
+                    <input matInput [formControl]="searchSrt" (input)="changeValue($event.target.value,'searchSrt')">
                 </mat-form-field>
 
-<!--                <mat-list-item *ngFor="let item of listsMakers" role="listitem">-->
-<!--                    <span class="span-title">{{item.action}}</span>-->
-<!--                    |-->
-<!--                    <span class="span-date">{{item.createAt | date}}</span>-->
-<!--                </mat-list-item>-->
-            </mat-tab>
-            <mat-tab label="History">
-                <mat-list role="list">
-                    <mat-list-item *ngFor="let item of listsHistory" role="listitem">
-                        <span class="span-title">{{item.action}}</span>
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>Search by category</mat-label>
+                    <mat-select
+                            formControlName="searchByCategory"
+                            (valueChange)="changeValue($event,'searchByCategory')"
+                            multiple>
+                        <mat-option *ngFor="let element of arrayTypes" [value]="element"
+                        >
+                            {{element.split('_').join(' ')}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <div class="scrollable">
+                    <button mat-button class="full-width button-flex"
+                            *ngFor="let item of makersList"
+                            (click)="setSelectMaker(item)"
+                            color="primary"
+                    >
+                        <div class="title">{{item.name}}</div>
                         |
-                        <span class="span-date">{{item.createAt | date}}</span>
-                    </mat-list-item>
-                </mat-list>
+                        <div class="date">{{item.createAt | date}}</div>
+                    </button>
+                </div>
             </mat-tab>
+
+            <div class="scrollable">
+                <mat-tab label="Action history">
+                    <div class="scrollable scrollable-history">
+                        <button
+                            mat-button
+                            class="full-width button-flex"
+                            *ngFor="let item of listsHistory"
+                            [color]="isColor(item)"
+                        >
+                            <div class="title">{{item.action}}</div>
+                            |
+                            <div class="date">{{item.createAt | date}}</div>
+                        </button>
+                    </div>
+                </mat-tab>
+            </div>
         </mat-tab-group>
     </div>
     <div class="action">
         <button mat-stroked-button color="warn" (click)="createMaker()">Create Marker</button>
+        <button mat-stroked-button color="warn" (click)="home()">Home</button>
     </div>
 </div>

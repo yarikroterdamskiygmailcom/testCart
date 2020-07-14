@@ -1,9 +1,19 @@
 import {BehaviorSubject, Observable, of} from "rxjs";
+import {Helper} from "../helpers/helper";
+import {tap} from "rxjs/operators";
 
-export abstract class ServiceProvider<T> {
+export abstract class ServiceProvider<T> extends Helper<any>{
     private items: BehaviorSubject<T[]> = new BehaviorSubject<T[]>([]);
     private _selectItem: T | undefined;
 
+    constructor(){
+        super();
+        const array = this.strToJson(() => JSON.parse(localStorage.getItem(this.localStr())), []);
+        this.items.next(Array.isArray(array) ? array : []);
+        this.handleWorkWithData()
+    }
+
+    abstract localStr(): string;
     abstract model(type: T): T;
 
     get selectMaker(): T | undefined {
@@ -14,7 +24,7 @@ export abstract class ServiceProvider<T> {
         this._selectItem = value ? this.model(value) : value;
     }
 
-    private _getValues(): T[] {
+    getValues(): T[] {
         return this.items.value || [];
     }
 
@@ -25,15 +35,19 @@ export abstract class ServiceProvider<T> {
     createItem(data: T): Observable<T> {
         const newItem = this.model(data);
         const array = [
-            ...this._getValues(),
+            ...this.getValues(),
             newItem
         ];
 
+        localStorage.setItem(this.localStr(), JSON.stringify(array));
         this.items.next(array);
-        return of(newItem);
+        return of(newItem)
+            .pipe(tap(() => this.handleWorkWithData()));
     }
 
+    abstract handleWorkWithData(): void
+
     getCount(): number {
-        return this._getValues().length;
+        return this.getValues().length;
     }
 }

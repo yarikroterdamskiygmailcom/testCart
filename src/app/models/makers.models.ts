@@ -27,13 +27,11 @@ export class MakerModel extends BaseModel<MakerModel> {
         super(init);
     }
 
-    images: MakerImageModel[] = [];
+    images: MakerImageModel[];
     position: MakerPositionModel;
+    positionSpecific: MakerPositionModel;
     name: string;
-    ratesArray: number[] = [];
-    oTime: string;
+    category: string[];
     description: string;
-    cTime: string;
-    site: string;
     phone: string;
 }

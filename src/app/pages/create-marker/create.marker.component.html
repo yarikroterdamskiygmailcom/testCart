@@ -1,5 +1,5 @@
 <div class="create-maker-container">
-    <form class="example-form" [formGroup]="MakerFormGroup">
+    <form class="example-form" [formGroup]="MakerFormGroup" #form>
 
         <mat-form-field class="example-full-width">
             <mat-label>Name</mat-label>
@@ -11,6 +11,27 @@
             <input matInput #location>
         </mat-form-field>
 
+        <mat-form-field appearance="fill">
+            <mat-label>Set category</mat-label>
+            <mat-select
+                formControlName="category"
+                (valueChange)="selectChangedValue($event)"
+                multiple>
+                <mat-option *ngFor="let element of arrayTypes" [value]="element">
+                    {{element.split('_').join(' ')}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Places</mat-label>
+            <mat-select (valueChange)="setSpecific($event)">
+                <mat-option *ngFor="let item of specificPosition" [value]="item">
+                    {{item.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
         <mat-form-field class="example-full-width">
             <mat-label>Telephone</mat-label>
             <span matPrefix>+</span>
@@ -19,35 +40,10 @@
 
 
         <mat-form-field class="example-full-width">
-            <mat-label>Site</mat-label>
-            <input matInput formControlName="site"  placeholder="http://">
-        </mat-form-field>
-
-        <mat-form-field class="example-full-width">
             <mat-label>Description</mat-label>
             <input matInput formControlName="description">
         </mat-form-field>
 
-        <table class="example-full-width" cellspacing="0">
-            <tr>
-                <td>
-                    <mat-form-field class="example-full-width">
-                        <mat-label>Open Time</mat-label>
-                        <input formControlName="oTime" matInput [matDatepicker]="picker">
-                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                        <mat-datepicker #picker></mat-datepicker>
-                    </mat-form-field>
-                </td>
-                <td>
-                    <mat-form-field class="example-full-width">
-                        <mat-label>Close Time</mat-label>
-                        <input formControlName="cTime" matInput [matDatepicker]="picker1">
-                        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-                        <mat-datepicker #picker1></mat-datepicker>
-                    </mat-form-field>
-                </td>
-            </tr>
-        </table>
         <app-upload-image (loadedPhoto)="loadedPhoto = $event"></app-upload-image>
         <div class="actions">
             <button mat-stroked-button color="warn" (click)="back()">Back</button>

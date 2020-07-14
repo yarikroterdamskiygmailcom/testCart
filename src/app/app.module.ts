@@ -9,18 +9,22 @@ import {MaterialModule} from "./material.module";
 import {StoreService} from "./_service/store.service";
 import {StoreHistoryService} from "./_service/store.history.service";
 import {SitebarComponent} from "./components/sitebar/sitebar.component";
+import {InfiniteScrollDirective} from "./directives/infinit.scroll.directive";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
     AppComponent,
-    SitebarComponent
+    SitebarComponent,
+    InfiniteScrollDirective,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     PagesModule,
-    MaterialModule
+    MaterialModule,
+    ReactiveFormsModule
   ],
   providers: [StoreService, StoreHistoryService],
   bootstrap: [AppComponent]

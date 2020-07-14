@@ -2,9 +2,12 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {GoogleMap, MapInfoWindow, MapMarker} from "@angular/google-maps";
 
 import {StoreService} from "../../_service/store.service";
-import {takeUntil} from "rxjs/operators";
-import {BehaviorSubject, interval, Subject} from "rxjs";
+import {map, takeUntil} from "rxjs/operators";
+import {BehaviorSubject, interval, Observable, Subject} from "rxjs";
 import {MakerModel} from "../../models/makers.models";
+import {Helper} from "../../helpers/helper";
+import {TypeHistoryAction} from "../../models/history.models";
+import {StoreHistoryService} from "../../_service/store.history.service";
 
 
 declare let google: any;
@@ -12,21 +15,23 @@ declare let google: any;
 @Component({
     selector: 'app-map',
     templateUrl: './map.component.html',
-    styleUrls: ['./map.component.sass']
+    styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements AfterViewInit {
+export class MapComponent extends Helper<any> implements AfterViewInit {
     @ViewChild(MapInfoWindow, {static: false}) infoWindow: MapInfoWindow;
     @ViewChild(GoogleMap, {static: false}) map: GoogleMap;
-    title = 'testCart';
-    zoom = 12;
-    center: {} = {
+
+    _center: {} = {
         lat: 50.4501,
         lng: 30.5234
     };
-    destroyed$ = new Subject();
 
-    constructor(private storeService: StoreService) {
+    get center(){
+        return (this.storeService.selectMaker && this.storeService.selectMaker.position) || this._center;
+    }
 
+    set center(value){
+        this._center = value;
     }
 
     customMapType = new google.maps.StyledMapType([
@@ -43,16 +48,29 @@ export class MapComponent implements AfterViewInit {
     });
     customMapTypeId = 'custom_style';
     options: any = {
-        mapTypeId: 'roadmap',
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
         disableDoubleClickZoom: true,
-        // maxZoom: 15,
         zoom: 12,
-        // minZoom: 8,
         mapTypeControlOptions: {
             mapTypeIds: [google.maps.MapTypeId.ROADMAP, this.customMapTypeId]
         }
     };
-    markers: BehaviorSubject<MakerModel[]> = this.storeService.getItems();
+
+    get makersList(): MakerModel[] {
+        return this.storeService.makersList;
+    }
+
+    data:MakerModel;
+
+    destroyed$ = new Subject();
+
+    constructor(
+        private storeService: StoreService,
+        private storeHistoryService: StoreHistoryService
+    ) {
+        super()
+    }
+
 
     ngAfterViewInit() {
         navigator.geolocation.getCurrentPosition(position => {
@@ -81,11 +99,19 @@ export class MapComponent implements AfterViewInit {
 
 
     openInfo(marker, data): void {
-        const test = this.infoWindow.open(marker);
-        debugger;
+        this.infoWindow.open(marker);
+        this.data = data;
+        this.storeHistoryService.createItem({
+            action: `Open info marker: ${data.id}`,
+            type: TypeHistoryAction.success
+        });
     }
 
     closeInfo(): void {
-debugger
+        this.infoWindow.close();
+        this.storeHistoryService.createItem({
+            action: `Close info marker`,
+            type: TypeHistoryAction.success
+        });
     }
 }
