@@ -4,6 +4,7 @@ import {StoreHistoryService} from "../../_service/store.history.service";
 import {BehaviorSubject} from "rxjs";
 import {HistoryModel} from "../../models/history.models";
 import {StoreService} from "../../_service/store.service";
+import {MakerModel} from "../../models/makers.models";
 
 @Component({
     selector: 'app-sitebar',
@@ -12,7 +13,7 @@ import {StoreService} from "../../_service/store.service";
 })
 export class SitebarComponent {
     historyList$: BehaviorSubject<HistoryModel[]> = this.storeHistoryService.getItems();
-    makersList$: BehaviorSubject<HistoryModel[]> = this.storeHistoryService.getItems();
+    makersList$: BehaviorSubject<MakerModel[]> = this.storeService.getItems();
 
     constructor(
         private router: Router,
@@ -28,7 +29,7 @@ export class SitebarComponent {
         return this.historyList$.getValue().reverse();
     }
 
-    get listsMakers(): HistoryModel[] {
+    get listsMakers(): MakerModel[] {
         return this.makersList$.getValue();
     }
 }
