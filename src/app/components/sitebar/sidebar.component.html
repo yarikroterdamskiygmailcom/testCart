@@ -10,7 +10,7 @@
                 <mat-form-field appearance="fill" class="full-width">
                     <mat-label>Search by category</mat-label>
                     <mat-select
-                            formControlName="searchByCategory"
+                            [formControl]="searchByCategory"
                             (valueChange)="changeValue($event,'searchByCategory')"
                             multiple>
                         <mat-option *ngFor="let element of arrayTypes" [value]="element"
